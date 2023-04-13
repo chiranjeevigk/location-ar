@@ -5,13 +5,14 @@ window.onload = () => {
 
     el.addEventListener("gps-camera-update-position", async(e) => {
         if(!downloaded) {
-            const response = await fetch(``);
+            const response = await fetch(`https://api.openrouteservice.org/v2/directions/foot-walking?api_key=5b3ce3597851110001cf62484682d4e0392846b8837d17afc01f6810&start=${e?.detail?.position?.longitude},${e?.detail?.position?.latitude}&end=79.79872,13.38743`);
             const pois = await response.json();
             pois.features.forEach ( feature => {
+            feature?.geometry?.coordinates?.forEach((item)=>{
                 const compoundEntity = document.createElement("a-entity");
                 compoundEntity.setAttribute('gps-new-entity-place', {
-                    latitude: feature.geometry.coordinates[1],
-                    longitude: feature.geometry.coordinates[0]
+                    latitude: item[1],
+                    longitude: item[0]
                 });
                 const box = document.createElement("a-box");
                 box.setAttribute("scale", {
@@ -39,6 +40,7 @@ window.onload = () => {
                 compoundEntity.appendChild(text);
                 document.querySelector("a-scene").appendChild(compoundEntity);
             });
+          });
         }
         downloaded = true;
     });
